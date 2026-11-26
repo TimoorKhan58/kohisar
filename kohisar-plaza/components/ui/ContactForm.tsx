@@ -1,15 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Send } from "lucide-react";
+import { getBrowserSupabase } from "@/lib/supabase";
+import { getWhatsAppLink } from "@/lib/seo";
 
 const schema = z.object({
-  name: z.string().min(2, "Please enter your name"),
-  phone: z.string().min(10, "Valid phone required"),
-  propertyType: z.string().min(1, "Select a type"),
-  message: z.string().min(10, "Tell us what you need"),
+  name: z.string().trim().min(2, "Please enter your name").max(100),
+  phone: z.string().trim().min(10, "Valid phone required").max(25),
+  propertyType: z.enum(["flat", "shop", "office", "other"]),
+  message: z.string().trim().min(10, "Tell us what you need").max(2000),
+  // Honeypot: hidden from people, bots tend to fill it in.
+  website: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -19,7 +24,7 @@ export function ContactForm({ id }: { id?: string }) {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitSuccessful },
+    formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -27,15 +32,41 @@ export function ContactForm({ id }: { id?: string }) {
     },
   });
 
-  function onSubmit(_data: FormValues) {
+  const [status, setStatus] = useState<"idle" | "sent" | "error">("idle");
+
+  async function onSubmit(data: FormValues) {
+    setStatus("idle");
+    if (data.website) {
+      // Bot filled the hidden field: pretend success, store nothing.
+      reset();
+      setStatus("sent");
+      return;
+    }
+    const supabase = getBrowserSupabase();
+    if (!supabase) {
+      setStatus("error");
+      return;
+    }
+    const { error } = await supabase.from("inquiries").insert({
+      name: data.name,
+      phone: data.phone,
+      property_type: data.propertyType,
+      message: data.message,
+      page: window.location.pathname.slice(0, 200),
+    });
+    if (error) {
+      setStatus("error");
+      return;
+    }
     reset();
+    setStatus("sent");
   }
 
   return (
     <form
       id={id}
       onSubmit={handleSubmit(onSubmit)}
-      className="grid gap-4 rounded-2xl border border-primary/10 bg-white p-6 shadow-sm md:grid-cols-2"
+      className="relative grid gap-4 rounded-2xl border border-primary/10 bg-white p-6 shadow-sm md:grid-cols-2"
     >
       <div className="md:col-span-2">
         <h3 className="text-lg font-bold text-primary">Send an inquiry</h3>
@@ -88,17 +119,35 @@ export function ContactForm({ id }: { id?: string }) {
           <p className="mt-1 text-xs text-red-600">{errors.message.message}</p>
         ) : null}
       </div>
+      <input
+        type="text"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        {...register("website")}
+        className="absolute -left-[9999px] h-0 w-0 opacity-0"
+      />
       <div className="md:col-span-2 flex flex-wrap items-center gap-4">
         <button
           type="submit"
+          disabled={isSubmitting}
           className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 font-semibold text-white hover:bg-primary/90"
         >
           <Send className="h-4 w-4" />
-          Submit inquiry
+          {isSubmitting ? "Sending…" : "Submit inquiry"}
         </button>
-        {isSubmitSuccessful ? (
+        {status === "sent" ? (
           <p className="text-sm text-emerald-700">
-            Thanks — a team member will contact you about Multi Gardens rentals.
+            Thanks — we received your inquiry and will contact you about Multi Gardens rentals.
+          </p>
+        ) : null}
+        {status === "error" ? (
+          <p className="text-sm text-red-600">
+            Sorry, your message could not be sent.{" "}
+            <a href={getWhatsAppLink()} className="font-semibold underline">
+              Message us on WhatsApp
+            </a>{" "}
+            instead.
           </p>
         ) : null}
       </div>

@@ -50,9 +50,18 @@ export function AdminShell({ children }: { children: ReactNode }) {
     <Ctx.Provider value={{ supabase, session }}>
       <div className="border-b border-primary/10 bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:px-6">
-          <Link href="/admin" className="font-semibold text-primary">
-            Kohisar Plaza · Admin
-          </Link>
+          <nav className="flex items-center gap-5 text-sm">
+            <Link href="/admin" className="font-semibold text-primary">
+              Kohisar Plaza · Admin
+            </Link>
+            <Link href="/admin" className="text-primary hover:text-accent">
+              Listings
+            </Link>
+            <Link href="/admin/inquiries" className="text-primary hover:text-accent">
+              Inquiries
+              <NewInquiryCount supabase={supabase} />
+            </Link>
+          </nav>
           <div className="flex items-center gap-4 text-sm">
             <span className="hidden text-muted sm:inline">{session.user.email}</span>
             <button
@@ -125,5 +134,30 @@ function LoginForm({ supabase }: { supabase: SupabaseClient }) {
         </button>
       </form>
     </Panel>
+  );
+}
+
+/** Small badge with the number of unhandled inquiries; refreshes every minute. */
+function NewInquiryCount({ supabase }: { supabase: SupabaseClient }) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      const { count } = await supabase
+        .from("inquiries")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "new");
+      if (active) setCount(count ?? 0);
+    };
+    load();
+    const t = setInterval(load, 60_000);
+    return () => {
+      active = false;
+      clearInterval(t);
+    };
+  }, [supabase]);
+  if (!count) return null;
+  return (
+    <span className="ml-1.5 rounded-full bg-accent px-1.5 py-0.5 text-xs font-semibold text-white">{count}</span>
   );
 }
