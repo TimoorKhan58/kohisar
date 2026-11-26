@@ -55,13 +55,23 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false }, { status: 500 });
   }
 
-  await sendEmail({ name, phone, type: TYPE_LABEL[type], message, page });
-  return NextResponse.json({ ok: true });
+  const email = await sendEmail({ name, phone, type: TYPE_LABEL[type], message, page });
+  // `email` says only whether the alert went out ("sent" | "skipped" | "failed"); no details are exposed.
+  return NextResponse.json({ ok: true, email });
 }
 
-async function sendEmail(i: { name: string; phone: string; type: string; message: string; page: string | null }) {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) return; // Email alerts not set up yet; the inquiry is still in the admin.
+async function sendEmail(i: {
+  name: string;
+  phone: string;
+  type: string;
+  message: string;
+  page: string | null;
+}): Promise<"sent" | "skipped" | "failed"> {
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  if (!apiKey) {
+    console.warn("[inquiry] RESEND_API_KEY is not set; email alert skipped");
+    return "skipped"; // The inquiry is still saved in the admin.
+  }
 
   const to = process.env.INQUIRY_NOTIFY_EMAIL ?? "timoor.khan.global@gmail.com";
   // onboarding@resend.dev works without a verified domain, but only delivers to the Resend account's own email.
@@ -95,8 +105,13 @@ async function sendEmail(i: { name: string; phone: string; type: string; message
         text,
       }),
     });
-    if (!res.ok) console.error("[inquiry] email failed:", res.status, await res.text());
+    if (!res.ok) {
+      console.error("[inquiry] email failed:", res.status, await res.text());
+      return "failed";
+    }
+    return "sent";
   } catch (err) {
     console.error("[inquiry] email error:", (err as Error).message);
+    return "failed";
   }
 }
