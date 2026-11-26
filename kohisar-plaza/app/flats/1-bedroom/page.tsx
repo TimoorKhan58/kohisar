@@ -1,7 +1,7 @@
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { PropertyGrid } from "@/components/property/PropertyGrid";
 import { JsonLd } from "@/components/schema/JsonLd";
-import { properties } from "@/data/properties";
+import { getProperties } from "@/lib/properties";
 import {
   getApartmentComplexJsonLd,
   getBreadcrumbJsonLd,
@@ -16,7 +16,11 @@ export const metadata = buildMetadata({
   path: "/flats/1-bedroom",
 });
 
-export default function OneBedPage() {
+// Refresh listings from the database at most every 60s (admin saves refresh instantly).
+export const revalidate = 60;
+
+export default async function OneBedPage() {
+  const properties = await getProperties();
   const list = properties.filter(
     (p) => p.type === "flat" && p.bedrooms === 1
   );

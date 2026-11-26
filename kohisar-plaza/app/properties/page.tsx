@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { PropertyGrid } from "@/components/property/PropertyGrid";
 import { JsonLd } from "@/components/schema/JsonLd";
-import { properties } from "@/data/properties";
+import { getProperties } from "@/lib/properties";
 import {
   getApartmentComplexJsonLd,
   getBreadcrumbJsonLd,
@@ -17,7 +17,11 @@ export const metadata = buildMetadata({
   path: "/properties",
 });
 
-export default function PropertiesPage() {
+// Refresh listings from the database at most every 60s (admin saves refresh instantly).
+export const revalidate = 60;
+
+export default async function PropertiesPage() {
+  const properties = await getProperties();
   const apt = getApartmentComplexJsonLd({
     name: "Kohisar Plaza Rentals — Multi Gardens B17",
     description:
