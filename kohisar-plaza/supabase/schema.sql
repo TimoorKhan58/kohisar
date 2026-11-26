@@ -102,3 +102,21 @@ on conflict (id) do nothing;
 -- 6) Your admin login (must match the user you created in Authentication → Users)
 insert into public.admins (email) values ('ADMIN_EMAIL_HERE')
 on conflict (email) do nothing;
+
+-- 7) Contact form inquiries (added later; also applied as migration "contact_inquiries")
+create table if not exists public.inquiries (
+  id            uuid primary key default gen_random_uuid(),
+  created_at    timestamptz not null default now(),
+  name          text not null check (char_length(name) between 2 and 100),
+  phone         text not null check (char_length(phone) between 7 and 25),
+  property_type text not null default 'flat' check (property_type in ('flat', 'shop', 'office', 'other')),
+  message       text not null check (char_length(message) between 10 and 2000),
+  page          text check (char_length(page) <= 200),
+  status        text not null default 'new' check (status in ('new', 'handled'))
+);
+create index if not exists inquiries_created_at_idx on public.inquiries (created_at desc);
+alter table public.inquiries enable row level security;
+create policy "inquiries public insert" on public.inquiries for insert to anon, authenticated with check (status = 'new');
+create policy "inquiries admin read" on public.inquiries for select to authenticated using (public.is_admin());
+create policy "inquiries admin update" on public.inquiries for update to authenticated using (public.is_admin()) with check (public.is_admin());
+create policy "inquiries admin delete" on public.inquiries for delete to authenticated using (public.is_admin());
