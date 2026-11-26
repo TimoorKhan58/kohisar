@@ -22,9 +22,9 @@ export const homeFaqs: FAQItem[] = [
   },
   {
     question:
-      "Does Kohisar Plaza offer direct owner rentals with no commission?",
+      "Does Kohisar Plaza rent directly from the owner?",
     answer:
-      "Yes. Our tagline is direct from owner — no agent commission and no hidden charges on listed Kohisar Plaza units in Multi Gardens B17 and FMC.",
+      "Yes. Kohisar Plaza units in Multi Gardens B17 and FMC are rented directly by the owner, with the monthly rent and terms agreed upfront.",
   },
   {
     question: "What documents are needed to rent in MPCHS B17 Islamabad?",

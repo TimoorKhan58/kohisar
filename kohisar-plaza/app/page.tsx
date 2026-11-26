@@ -26,7 +26,7 @@ import {
   getRealEstateAgentJsonLd,
   getFAQPageJsonLd,
 } from "@/lib/schema-builders";
-import { getWhatsAppLink } from "@/lib/seo";
+import { getWhatsAppLink, getPhoneDisplay } from "@/lib/seo";
 
 const heroImage =
   "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1920&q=80";
@@ -77,7 +77,7 @@ const whyPoints = [
   },
   {
     title: "Direct from owner",
-    body: "No agent commission on our listed inventory — transparent flat for rent Multi Gardens B17 process.",
+    body: "Deal directly with the owner — clear monthly rent, simple agreements and quick WhatsApp viewings.",
   },
   {
     title: "Transparent pricing",
@@ -102,8 +102,7 @@ export default function HomePage() {
   const org = getOrganizationJsonLd();
   const agent = getRealEstateAgentJsonLd();
   const faq = getFAQPageJsonLd(homeFaqs);
-  const phone =
-    process.env.NEXT_PUBLIC_PHONE ?? "+92-300-0000000";
+  const phone = getPhoneDisplay();
 
   return (
     <>
@@ -128,8 +127,7 @@ export default function HomePage() {
           </h1>
           <p className="mt-4 max-w-2xl text-lg text-white/85">
             Premium flats, shops & offices in Kohisar Plaza, MPCHS Multi Gardens
-            and FMC. No agent. No commission. Direct owner listings with
-            WhatsApp viewings.
+            and FMC. Direct owner listings with WhatsApp viewings.
           </p>
           <div className="mt-8">
             <SearchBar />
@@ -157,8 +155,6 @@ export default function HomePage() {
             <span>Multi Gardens B17</span>
             <span className="text-accent">·</span>
             <span>Direct owner</span>
-            <span className="text-accent">·</span>
-            <span>No commission</span>
             <span className="text-accent">·</span>
             <span>CDA-aware MPCHS blocks</span>
           </p>

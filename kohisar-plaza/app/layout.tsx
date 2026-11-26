@@ -17,7 +17,7 @@ export const metadata: Metadata = buildMetadata({
   title:
     "Flats, Shops & Offices for Rent in Multi Gardens B17 Islamabad | Kohisar Plaza",
   description:
-    "Find 1-bed, 2-bed & 3-bed flats, shops and offices for rent in MPCHS Multi Gardens B17 and FMC Islamabad. Kohisar Plaza — direct from owner, no commission, zero hidden charges. WhatsApp now.",
+    "Find 1-bed, 2-bed & 3-bed flats, shops and offices for rent in MPCHS Multi Gardens B17 and FMC Islamabad. Kohisar Plaza — direct from owner, clear monthly rents. WhatsApp now.",
   path: "/",
 });
 

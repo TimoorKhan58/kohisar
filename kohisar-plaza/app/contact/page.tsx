@@ -9,7 +9,7 @@ import {
   getFAQPageJsonLd,
   getRealEstateAgentJsonLd,
 } from "@/lib/schema-builders";
-import { buildMetadata, getWhatsAppLink } from "@/lib/seo";
+import { buildMetadata, getWhatsAppLink, getPhoneDisplay } from "@/lib/seo";
 
 export const metadata = buildMetadata({
   title:
@@ -24,8 +24,7 @@ export default function ContactPage() {
   const crumbs = getBreadcrumbJsonLd([{ name: "Contact", path }]);
   const agent = getRealEstateAgentJsonLd();
   const faq = getFAQPageJsonLd(homeFaqs.slice(0, 3));
-  const phone =
-    process.env.NEXT_PUBLIC_PHONE ?? "+92-300-0000000";
+  const phone = getPhoneDisplay();
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 md:px-6">

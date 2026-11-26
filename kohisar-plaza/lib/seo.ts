@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://kohisarplaza.com";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://kohisar.vercel.app";
 const siteName = process.env.NEXT_PUBLIC_SITE_NAME ?? "Kohisar Plaza";
 const waRaw = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "923309089380";
 
@@ -11,6 +11,15 @@ export function getSiteUrl() {
 
 export function getWhatsAppDigits(): string {
   return waRaw.replace(/\D/g, "");
+}
+
+/** Public phone number. Falls back to the WhatsApp number (e.g. +92-330-9089380). */
+export function getPhoneDisplay(): string {
+  if (process.env.NEXT_PUBLIC_PHONE) return process.env.NEXT_PUBLIC_PHONE;
+  const d = getWhatsAppDigits();
+  return d.length === 12 && d.startsWith("92")
+    ? `+92-${d.slice(2, 5)}-${d.slice(5)}`
+    : `+${d}`;
 }
 
 export function getWhatsAppLink(encodedMessage?: string): string {

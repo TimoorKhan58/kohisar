@@ -28,11 +28,13 @@ export function FAQAccordion({ items }: { items: FAQItem[] }) {
                 )}
               />
             </button>
-            {isOpen ? (
-              <div className="px-4 pb-4 text-sm leading-relaxed text-body md:px-6 md:pb-6">
-                {item.answer}
-              </div>
-            ) : null}
+            {/* Always rendered so every answer is in the HTML for search engines; `hidden` only collapses it visually. */}
+            <div
+              hidden={!isOpen}
+              className="px-4 pb-4 text-sm leading-relaxed text-body md:px-6 md:pb-6"
+            >
+              {item.answer}
+            </div>
           </div>
         );
       })}
