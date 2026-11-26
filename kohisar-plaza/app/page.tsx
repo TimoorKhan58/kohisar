@@ -19,7 +19,7 @@ import { AreaGuideCard } from "@/components/ui/AreaGuideCard";
 import { TestimonialCard } from "@/components/ui/TestimonialCard";
 import { ContactForm } from "@/components/ui/ContactForm";
 import { MapEmbed } from "@/components/ui/MapEmbed";
-import { properties } from "@/data/properties";
+import { getProperties } from "@/lib/properties";
 import { homeFaqs } from "@/data/faqs";
 import {
   getOrganizationJsonLd,
@@ -97,7 +97,11 @@ const whyPoints = [
   },
 ];
 
-export default function HomePage() {
+// Refresh listings from the database at most every 60s (admin saves refresh instantly).
+export const revalidate = 60;
+
+export default async function HomePage() {
+  const properties = await getProperties();
   const featured = properties.filter((p) => p.isFeatured).slice(0, 6);
   const org = getOrganizationJsonLd();
   const agent = getRealEstateAgentJsonLd();
