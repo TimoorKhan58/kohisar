@@ -45,7 +45,7 @@ export default function AboutPage() {
         binding landlord and tenant expectations.
       </p>
       <p className="mt-4 leading-relaxed text-body">
-        Whether you need a 1 bed flat Multi Gardens direct owner no commission,
+        Whether you need a 1 bed flat in Multi Gardens direct from the owner,
         short term flat rent MPCHS Islamabad clarity or shop exposure in FMC, we
         route you swiftly through WhatsApp, phone and on-site viewings.
       </p>
