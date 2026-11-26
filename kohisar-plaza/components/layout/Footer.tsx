@@ -3,7 +3,7 @@ import { MessageCircle, Phone, Mail, MapPin } from "lucide-react";
 import { getPhoneDisplay, getWhatsAppLink } from "@/lib/seo";
 
 const phone = getPhoneDisplay();
-const email = "rentals@kohisarplaza.com";
+const email = process.env.NEXT_PUBLIC_EMAIL ?? "timoor.khan.global@gmail.com";
 
 export function Footer() {
   return (
