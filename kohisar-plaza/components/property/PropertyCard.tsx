@@ -36,6 +36,9 @@ export function PropertyCard({ property }: { property: Property }) {
         <span className="absolute left-3 top-3 rounded-full bg-primary/90 px-3 py-1 text-xs font-semibold text-white">
           {badgeLabel(property)}
         </span>
+        <span className="absolute bottom-2 right-2 rounded bg-black/55 px-2 py-0.5 text-[10px] font-medium text-white">
+          Representative image
+        </span>
       </div>
       <div className="flex flex-1 flex-col p-4">
         <p className="text-xs font-semibold uppercase tracking-wide text-accent">
