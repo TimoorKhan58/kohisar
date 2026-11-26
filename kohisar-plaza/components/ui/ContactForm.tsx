@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Send } from "lucide-react";
-import { getBrowserSupabase } from "@/lib/supabase";
 import { getWhatsAppLink } from "@/lib/seo";
 
 const schema = z.object({
@@ -42,19 +41,18 @@ export function ContactForm({ id }: { id?: string }) {
       setStatus("sent");
       return;
     }
-    const supabase = getBrowserSupabase();
-    if (!supabase) {
-      setStatus("error");
-      return;
+    let ok = false;
+    try {
+      const res = await fetch("/api/inquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...data, page: window.location.pathname }),
+      });
+      ok = res.ok;
+    } catch {
+      ok = false;
     }
-    const { error } = await supabase.from("inquiries").insert({
-      name: data.name,
-      phone: data.phone,
-      property_type: data.propertyType,
-      message: data.message,
-      page: window.location.pathname.slice(0, 200),
-    });
-    if (error) {
+    if (!ok) {
       setStatus("error");
       return;
     }
