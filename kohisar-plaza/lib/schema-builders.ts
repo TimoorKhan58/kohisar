@@ -1,7 +1,6 @@
-import { getSiteUrl, getWhatsAppDigits } from "@/lib/seo";
+import { getPhoneDisplay, getSiteUrl, getWhatsAppDigits } from "@/lib/seo";
 
-const phoneDisplay =
-  process.env.NEXT_PUBLIC_PHONE ?? "+92-300-0000000";
+const phoneDisplay = getPhoneDisplay();
 
 export function getOrganizationJsonLd() {
   const url = getSiteUrl();

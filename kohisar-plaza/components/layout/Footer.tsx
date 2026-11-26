@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { MessageCircle, Phone, Mail, MapPin } from "lucide-react";
-import { getWhatsAppLink } from "@/lib/seo";
+import { getPhoneDisplay, getWhatsAppLink } from "@/lib/seo";
 
-const phone =
-  process.env.NEXT_PUBLIC_PHONE ?? "+92-300-0000000";
+const phone = getPhoneDisplay();
 const email = "rentals@kohisarplaza.com";
 
 export function Footer() {

@@ -26,7 +26,7 @@ import {
   getRealEstateAgentJsonLd,
   getFAQPageJsonLd,
 } from "@/lib/schema-builders";
-import { getWhatsAppLink } from "@/lib/seo";
+import { getWhatsAppLink, getPhoneDisplay } from "@/lib/seo";
 
 const heroImage =
   "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1920&q=80";
@@ -102,8 +102,7 @@ export default function HomePage() {
   const org = getOrganizationJsonLd();
   const agent = getRealEstateAgentJsonLd();
   const faq = getFAQPageJsonLd(homeFaqs);
-  const phone =
-    process.env.NEXT_PUBLIC_PHONE ?? "+92-300-0000000";
+  const phone = getPhoneDisplay();
 
   return (
     <>
